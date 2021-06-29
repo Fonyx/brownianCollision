@@ -6,7 +6,7 @@ canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
 
 // a color pallet to choose from
-let color1 = ['#F3FEB0', '#FEA443', '#705E78', '#A5AAA3', '#0812F33']
+let color1 = ['#F3FEB0', '#FEA443', '#705E78', '#A5AAA3', '#812F33']
 let color2 = ['#FBA922', '#F0584A', '#2B5877', '#1194A8', '#1FC7B7']
 let color3 = ['#66D1D1', '#48A2A3', '#115569', '#FCE66F', '#FFFAE8']
 let color4 = ['#BF303C', '#082640', '#D9BA82', '#F2522E', '#D92323']
@@ -15,15 +15,20 @@ let colorPallets = [color1, color2, color3, color4]
 
 colors = colorPallets[getRandomIntFromRange(0,colorPallets.length-1)];
 
-particleCount = 100;
+particleCount = 350;
 // a pixel offset
-safetyMargin = 3;
+safetyMargin = 5;
 // generate sizes
-minGenSize = 5;
-maxGenSize = 50;
+minGenSize = 25;
+maxGenSize = 25;
 // generated speeds
 minGenSpeed = -1;
 maxGenSpeed = 1;
+// mouse impact size
+mouseImpactSize = 150;
+// opacity change rates
+opacityIncRate = 0.2;
+opacityDesRate = 0.02;
 
 // generate a random integer inside a range
 function getRandomIntFromRange(min, max){
@@ -111,7 +116,7 @@ addEventListener('resize', () =>{
 })
 
 // a class that represents the circle, with two methods, draw and update
-function Particle(x, y, dx, dy, radius, fill) {
+function Particle(x, y, dx, dy, radius, color, opacity) {
     this.x = x;
     this.y = y;
     this.velocity = {
@@ -120,19 +125,11 @@ function Particle(x, y, dx, dy, radius, fill) {
     };
     this.radius = radius;
     this.mass = Math.PI*Math.pow(radius, 2);
-    this.fill = fill;
-
-    this.draw = function() {
-        c.beginPath();
-        c.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
-        // c.fillStyle
-        c.strokeStyle = this.fill;
-        // c.fill()
-        c.stroke();
-        c.closePath()
-    }
+    this.color = color;
+    this.opacity = opacity;
 
     this.update = particles => {
+        
         this.draw();
 
         // collision detect check
@@ -150,10 +147,34 @@ function Particle(x, y, dx, dy, radius, fill) {
         if(this.y - this.radius <= 0 || this.y + this.radius >= innerHeight){
             this.velocity.y = -this.velocity.y;
         }
+
+        // mouse collision detection
+        if(distance(mouse.x, mouse.y, this.x, this.y) < mouseImpactSize){
+            if(this.opacity < 1){
+                this.opacity += opacityIncRate;
+            }
+        } else if (this.opacity > 0){
+            this.opacity -= opacityDesRate;
+            // stop opacity from going negative
+            this.opacity = Math.max(0.2, this.opacity);
+        }
         
         // move particle
         this.x += this.velocity.x;
         this.y += this.velocity.y;
+    }
+
+    this.draw = () => {
+        c.beginPath();
+        c.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
+        c.save();
+        c.globalAlpha = this.opacity;
+        c.fillStyle = this.color;
+        c.fill();
+        c.restore();
+        c.strokeStyle = this.color;
+        c.stroke();
+        c.closePath();
     }
 }
 
@@ -167,7 +188,8 @@ function init(){
         let y = getRandomIntFromRange(radius+safetyMargin, innerHeight-(radius+safetyMargin));
         const dx = getRandomIntFromRange(minGenSpeed, maxGenSpeed);
         const dy = getRandomIntFromRange(minGenSpeed, maxGenSpeed);
-        const fill = getRandomColor();
+        const color = getRandomColor();
+        let opacity = Math.random();
 
         // skip first call
         if (i !== 0){
@@ -183,7 +205,7 @@ function init(){
             }
         }
 
-        particles.push(new Particle(x, y, dx, dy, radius, fill));
+        particles.push(new Particle(x, y, dx, dy, radius, color, opacity));
     }
 }
 
