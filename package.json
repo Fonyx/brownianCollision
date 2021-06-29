@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Fonyx/brownianCollision#readme",
   "dependencies": {
+    "bootstrap": "^5.0.2",
     "normalize.css": "^8.0.1"
   },
   "devDependencies": {
