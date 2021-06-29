@@ -1,0 +1,25 @@
+{
+  "name": "browniancollision",
+  "version": "1.0.0",
+  "description": "A project that builds out collision detection on a brownian system",
+  "main": "script.js",
+  "scripts": {
+    "test": "\u001b[C\u001b[C\u001b[C\u001b[C\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fonyx/brownianCollision.git"
+  },
+  "keywords": [
+    "collision"
+  ],
+  "author": "nicholas ritchie",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fonyx/brownianCollision/issues"
+  },
+  "homepage": "https://github.com/Fonyx/brownianCollision#readme",
+  "dependencies": {
+    "normalize.css": "^8.0.1"
+  }
+}
